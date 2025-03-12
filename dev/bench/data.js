@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741795643164,
+  "lastUpdate": 1741795828838,
   "repoUrl": "https://github.com/simoncozens/fontgrep",
   "entries": {
     "Rust Benchmark": [
@@ -89,6 +89,36 @@ window.BENCHMARK_DATA = {
             "name": "bench_name_ofl",
             "value": 5929314.1,
             "range": "± 126910.00",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "simon@simon-cozens.org",
+            "name": "Simon Cozens",
+            "username": "simoncozens"
+          },
+          "committer": {
+            "email": "simon@simon-cozens.org",
+            "name": "Simon Cozens",
+            "username": "simoncozens"
+          },
+          "distinct": true,
+          "id": "de33bb761fb7be8eb922b77a894a093f9727c668",
+          "message": "I had this backwards",
+          "timestamp": "2025-03-12T16:08:49Z",
+          "tree_id": "ddee027b2322a3f9a879f2d2aa7c9507c69ec61e",
+          "url": "https://github.com/simoncozens/fontgrep/commit/de33bb761fb7be8eb922b77a894a093f9727c668"
+        },
+        "date": 1741795828227,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bench_name_ofl",
+            "value": 5791095.6,
+            "range": "± 209270.96",
             "unit": "ns/iter"
           }
         ]
