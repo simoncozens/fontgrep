@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741795604323,
+  "lastUpdate": 1741795643164,
   "repoUrl": "https://github.com/simoncozens/fontgrep",
   "entries": {
     "Rust Benchmark": [
@@ -59,6 +59,36 @@ window.BENCHMARK_DATA = {
             "name": "bench_name_ofl",
             "value": 5873104.25,
             "range": "± 299442.90",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "simon@simon-cozens.org",
+            "name": "Simon Cozens",
+            "username": "simoncozens"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "baba1b426095f5bcd504fc60f219987712821d51",
+          "message": "Merge pull request #4 from twardoch/pr-clean\n\nSome cleanup, jwalk",
+          "timestamp": "2025-03-12T16:05:41Z",
+          "tree_id": "f4e24389e6711ca2abf2bdb9d0e8f43c49ec8862",
+          "url": "https://github.com/simoncozens/fontgrep/commit/baba1b426095f5bcd504fc60f219987712821d51"
+        },
+        "date": 1741795642759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bench_name_ofl",
+            "value": 5929314.1,
+            "range": "± 126910.00",
             "unit": "ns/iter"
           }
         ]
