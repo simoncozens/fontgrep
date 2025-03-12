@@ -12,8 +12,9 @@ use std::path::PathBuf;
 #[derive(Parser, Debug)]
 #[command(
     version,
-    about = "A tool to search for fonts based on various criteria",
-    long_about = "fontgrep is a command-line tool that helps you find fonts based on their properties, such as OpenType features, variation axes, scripts, and more. It can search through directories of font files and maintain a cache for faster subsequent searches."
+    about = "find fonts based on various criteria",
+    long_about = "fontgrep: CLI tool that finds fonts that 
+    contain specified features, axes, codepoints, scripts"
 )]
 pub struct Cli {
     /// Subcommand to execute
@@ -139,7 +140,7 @@ pub(crate) struct SearchArgs {
     #[arg(
         short = 'u',
         long,
-        value_parser = parse_codepoints,
+        value_delimiter = ',',
         help = "Unicode codepoints or ranges to search for (e.g., U+0041-U+005A,U+0061)",
         long_help = "Comma-separated list of Unicode codepoints or ranges to search for. \
                     Formats accepted:\n\
@@ -147,7 +148,7 @@ pub(crate) struct SearchArgs {
                     - Range: U+0041-U+005A\n\
                     - Single character: A"
     )]
-    pub codepoints: Vec<char>,
+    pub codepoints: Vec<String>,
 
     /// Text to check for support
     #[arg(
@@ -249,8 +250,7 @@ fn parse_codepoint(input: &str) -> Result<char> {
     let cp = u32::from_str_radix(input, 16)
         .map_err(|_| FontgrepError::Parse(format!("Invalid codepoint: {}", input)))?;
 
-    char::from_u32(cp)
-        .ok_or_else(|| FontgrepError::Parse(format!("Invalid Unicode codepoint: U+{:04X}", cp)))
+    char::from_u32(cp).ok_or_else(|| FontgrepError::Parse(format!("Invalid codepoint: {}", input)))
 }
 
 /// Output results
@@ -263,32 +263,8 @@ fn output_results(results: &[String], json_output: bool) -> Result<()> {
             println!("{}", result);
         }
     }
-
     Ok(())
 }
-
-// /// Output font info
-// fn output_font_info(info: &FontInfo, detailed: bool, json_output: bool) -> Result<()> {
-// We'll come back to this soon.
-
-// if json_output {
-//     let json = serde_json::to_string_pretty(info)?;
-//     println!("{}", json);
-// } else {
-//     println!("Name: {}", info.name_string);
-//     println!("Variable: {}", info.is_variable);
-
-//     if detailed {
-//         println!("Axes: {}", info.axes.join(", "));
-//         println!("Features: {}", info.features.join(", "));
-//         println!("Scripts: {}", info.scripts.join(", "));
-//         println!("Tables: {}", info.tables.join(", "));
-//         println!("Charset: {}", info.charset_string);
-//     }
-// }
-
-// Ok(())
-// }
 
 #[cfg(test)]
 mod tests {
@@ -297,15 +273,23 @@ mod tests {
     #[test]
     fn test_parse_codepoint() {
         assert_eq!(parse_codepoint("A").unwrap(), 'A');
-        assert_eq!(parse_codepoint("0041").unwrap(), 'A');
         assert_eq!(parse_codepoint("U+0041").unwrap(), 'A');
         assert_eq!(parse_codepoint("u+0041").unwrap(), 'A');
+        assert_eq!(parse_codepoint("0041").unwrap(), 'A');
     }
 
     #[test]
     fn test_parse_codepoints() {
-        let input = "A,U+0042-U+0044";
-        let result = parse_codepoints(input).unwrap();
-        assert_eq!(result, vec!['A', 'B', 'C', 'D']);
+        assert_eq!(parse_codepoints("A,B,C").unwrap(), vec!['A', 'B', 'C']);
+        assert_eq!(
+            parse_codepoints("U+0041,U+0042,U+0043").unwrap(),
+            vec!['A', 'B', 'C']
+        );
+        assert_eq!(parse_codepoints("A-C").unwrap(), vec!['A', 'B', 'C']);
+        assert_eq!(
+            parse_codepoints("U+0041-U+0043").unwrap(),
+            vec!['A', 'B', 'C']
+        );
+        assert_eq!(parse_codepoints("A,B-D").unwrap(), vec!['A', 'B', 'C', 'D']);
     }
 }

@@ -3,7 +3,7 @@
 // Query execution and font matching
 
 use crate::{
-    cli::SearchArgs,
+    cli::{parse_codepoints, SearchArgs},
     font::{is_font_file, FontInfo},
     matchers::{
         AxesMatcher, CodepointsMatcher, FeaturesMatcher, FontMatcher, NameMatcher, ScriptsMatcher,
@@ -63,7 +63,15 @@ impl From<&SearchArgs> for FontQuery {
             if let Some(text) = &args.text {
                 codepoints.extend(text.chars());
             }
-            codepoints.extend(&args.codepoints);
+
+            // Parse the codepoints from strings
+            if !args.codepoints.is_empty() {
+                let codepoint_str = args.codepoints.join(",");
+                if let Ok(parsed_codepoints) = parse_codepoints(&codepoint_str) {
+                    codepoints.extend(parsed_codepoints);
+                }
+            }
+
             matchers.push(Box::new(CodepointsMatcher::new(&codepoints)));
         }
 
