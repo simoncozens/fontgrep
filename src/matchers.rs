@@ -23,7 +23,7 @@ impl AxesMatcher {
     }
 
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = String> + 'a {
-        info.font().axes().iter().map(|axis| axis.tag().to_string())
+        info.font.axes().iter().map(|axis| axis.tag().to_string())
     }
 }
 
@@ -49,7 +49,7 @@ impl FeaturesMatcher {
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = String> + 'a {
         // Extract GSUB features
         let gsub_features = info
-            .font()
+            .font
             .gsub()
             .and_then(|gsub| gsub.feature_list())
             .map(|feature_list| feature_list.feature_records())
@@ -58,7 +58,7 @@ impl FeaturesMatcher {
             .map(|feature| feature.feature_tag().to_string());
         // Extract GPOS features
         let gpos_features = info
-            .font()
+            .font
             .gpos()
             .and_then(|gpos| gpos.feature_list())
             .map(|feature_list| feature_list.feature_records())
@@ -94,7 +94,7 @@ impl ScriptsMatcher {
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = String> + 'a {
         // Extract GSUB scripts
         let gsub_scripts = info
-            .font()
+            .font
             .gsub()
             .and_then(|gsub| gsub.script_list())
             .map(|script_list| script_list.script_records())
@@ -103,7 +103,7 @@ impl ScriptsMatcher {
             .map(|script| script.script_tag().to_string());
         // Extract GPOS scripts
         let gpos_scripts = info
-            .font()
+            .font
             .gpos()
             .and_then(|gpos| gpos.script_list())
             .map(|script_list| script_list.script_records())
@@ -138,7 +138,7 @@ impl TablesMatcher {
 
     /// Extract font tables from a font
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = String> + 'a {
-        info.font()
+        info.font
             .table_directory
             .table_records()
             .iter()
@@ -169,7 +169,7 @@ impl CodepointsMatcher {
     }
 
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = char> + 'a {
-        info.font()
+        info.font
             .charmap()
             .mappings()
             .flat_map(|(codepoint, _)| char::try_from(codepoint))
@@ -197,7 +197,7 @@ impl NameMatcher {
     }
 
     fn extract<'a>(&self, info: &'a FontInfo) -> impl Iterator<Item = String> + 'a {
-        if let Ok(name) = info.font().name() {
+        if let Ok(name) = info.font.name() {
             Either::Left(
                 name.name_record()
                     .iter()

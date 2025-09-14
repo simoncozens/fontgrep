@@ -4,29 +4,38 @@
 
 use crate::{FontgrepError, Result};
 use memmap2::Mmap;
-use skrifa::FontRef;
+use skrifa::{raw::FileRef, FontRef};
 use std::{fs::File, path::Path};
 
 /// Font information extracted from a font file
-pub struct FontInfo {
+pub struct FileInfo {
     pub font_data: Mmap,
     // pub(crate) font: FontRef<'a>,
 }
 
-impl FontInfo {
+pub struct FontInfo<'a> {
+    pub font: FontRef<'a>,
+}
+
+impl FileInfo {
     /// Load font information from a file
-    pub fn load(path: &Path) -> Result<FontInfo> {
+    pub fn load(path: &Path) -> Result<FileInfo> {
         let file = File::open(path)?;
         let data = unsafe { Mmap::map(&file).map_err(|e| FontgrepError::Mmap(e.to_string()))? };
+
         // Check we can do the thing.
-        FontRef::new(&data).map_err(|e| FontgrepError::Font(e.to_string()))?;
+        FileRef::new(&data).map_err(|e| FontgrepError::Font(e.to_string()))?;
 
         Ok(Self { font_data: data })
     }
 
-    pub fn font(&self) -> FontRef<'_> {
+    pub fn fonts(&self) -> impl Iterator<Item = FontInfo<'_>> {
         // We already checked we can do the thing
-        FontRef::new(&self.font_data).unwrap()
+        FileRef::new(&self.font_data)
+            .unwrap()
+            .fonts()
+            .flatten()
+            .map(|font| FontInfo { font })
     }
 }
 

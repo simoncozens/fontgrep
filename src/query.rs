@@ -4,7 +4,7 @@
 
 use crate::{
     cli::SearchArgs,
-    font::{is_font_file, FontInfo},
+    font::{is_font_file, FileInfo},
     matchers::{
         AxesMatcher, CodepointsMatcher, FeaturesMatcher, FontMatcher, NameMatcher, ScriptsMatcher,
         TablesMatcher,
@@ -159,11 +159,13 @@ impl FontQuery {
     /// Process a font file
     fn process_font_file(&self, path: &Path) -> Result<bool> {
         // Load font info
-        let font_info = FontInfo::load(path)?;
+        let fileinfo = FileInfo::load(path)?;
+        let mut fonts = fileinfo.fonts();
 
-        Ok(self
-            .matchers
-            .iter()
-            .all(|matcher| matcher.matches(&font_info)))
+        Ok(fonts.any(|font_info| {
+            self.matchers
+                .iter()
+                .all(|matcher| matcher.matches(&font_info))
+        }))
     }
 }
