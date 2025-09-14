@@ -58,12 +58,12 @@ impl From<&SearchArgs> for FontQuery {
             matchers.push(Box::new(NameMatcher::new(&args.name)));
         }
 
-        if !args.codepoints.is_empty() || args.text.is_some() {
+        if !args.codepoints.0.is_empty() || args.text.is_some() {
             let mut codepoints: Vec<char> = Vec::new();
             if let Some(text) = &args.text {
                 codepoints.extend(text.chars());
             }
-            codepoints.extend(&args.codepoints);
+            codepoints.extend(&args.codepoints.0);
             matchers.push(Box::new(CodepointsMatcher::new(&codepoints)));
         }
 

@@ -7,6 +7,8 @@ use clap::{Args as ClapArgs, Parser};
 use regex::Regex;
 use skrifa::Tag;
 use std::path::PathBuf;
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CodepointArgs(pub Vec<char>);
 
 /// Command-line arguments for fontgrep
 #[derive(Parser, Debug)]
@@ -147,7 +149,7 @@ pub(crate) struct SearchArgs {
                     - Range: U+0041-U+005A\n\
                     - Single character: A"
     )]
-    pub codepoints: Vec<char>,
+    pub codepoints: CodepointArgs,
 
     /// Text to check for support
     #[arg(
@@ -197,7 +199,7 @@ pub fn execute(cli: Cli) -> Result<()> {
 }
 
 /// Parse codepoints from strings
-pub fn parse_codepoints(input: &str) -> Result<Vec<char>> {
+pub fn parse_codepoints(input: &str) -> Result<CodepointArgs> {
     let mut result = Vec::new();
 
     for item in input.split(",") {
@@ -235,7 +237,7 @@ pub fn parse_codepoints(input: &str) -> Result<Vec<char>> {
         }
     }
 
-    Ok(result)
+    Ok(CodepointArgs(result))
 }
 
 /// Parse a single codepoint from a string
@@ -306,6 +308,6 @@ mod tests {
     fn test_parse_codepoints() {
         let input = "A,U+0042-U+0044";
         let result = parse_codepoints(input).unwrap();
-        assert_eq!(result, vec!['A', 'B', 'C', 'D']);
+        assert_eq!(result, CodepointArgs(vec!['A', 'B', 'C', 'D']));
     }
 }
