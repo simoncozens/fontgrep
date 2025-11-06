@@ -18,7 +18,7 @@ A command-line tool for searching and analyzing font files based on various crit
 ## Installation
 
 ```bash
-cargo install fontgrep
+cargo install --git https://github.com/simoncozens/fontgrep
 ```
 
 ## Usage
